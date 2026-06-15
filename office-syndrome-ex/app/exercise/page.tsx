@@ -15,16 +15,16 @@ const informations = [
   {
     group: "About Office Syndrome",
     items: [
-      { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม" },
-      { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม" },
+      { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม", route: "/info/what-is" },
+      { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม", route: "/info/stages" },
     ],
   },
   {
     group: "Ergonomics",
     items: [
-      { en: "Equioment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม" },
-      { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม" },
-      { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน" },
+      { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment" },
+      { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment" },
+      { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: null },
     ],
   },
 ];
@@ -72,7 +72,7 @@ export default function ExercisePage() {
       >
         {tab === "exercise" ? (
           <>
-            <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "28px", margin: "0 0 24px", color: "#1a1a18" }}>
+            <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "28px", margin: "0 0 24px" }}>
               Exercise
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -124,13 +124,14 @@ export default function ExercisePage() {
                   marginBottom: "16px",
                 }}
               >
-                <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "22px", margin: "0 0 16px", color: "#1a1a18" }}>
+                <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "22px", margin: "0 0 16px" }}>
                   {section.group}
                 </h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {section.items.map((item) => (
                     <div
                       key={item.en}
+                      onClick={() => item.route && router.push(item.route)}
                       style={{
                         background: "#c0bdb8",
                         borderRadius: "100px",
