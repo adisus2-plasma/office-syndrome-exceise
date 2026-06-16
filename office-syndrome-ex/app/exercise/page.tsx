@@ -24,7 +24,7 @@ const informations = [
     items: [
       { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment" },
       { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment" },
-      { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: null },
+      { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture" },
     ],
   },
 ];
@@ -72,7 +72,7 @@ export default function ExercisePage() {
       >
         {tab === "exercise" ? (
           <>
-            <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "28px", margin: "0 0 24px" }}>
+            <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "28px", margin: "0 0 24px", color: "#1a1a18" }}>
               Exercise
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -124,7 +124,7 @@ export default function ExercisePage() {
                   marginBottom: "16px",
                 }}
               >
-                <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "22px", margin: "0 0 16px" }}>
+                <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "22px", margin: "0 0 16px", color: "#1a1a18" }}>
                   {section.group}
                 </h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
