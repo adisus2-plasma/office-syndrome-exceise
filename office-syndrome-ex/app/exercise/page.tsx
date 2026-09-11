@@ -1,237 +1,186 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { useRef, useState, type PointerEvent } from "react";
+import styles from "./page.module.css";
 
 const exercises = [
-  { id: 1, label: "Eye", route: "/exercise/eye" },
-  { id: 2, label: "Neck & Shoulder", route: "/exercise/neck" },
-  { id: 3, label: "Back & waist", route: "/exercise/back" },
-  { id: 4, label: "Arm & Hand", route: "/exercise/arm" },
-  { id: 5, label: "Leg & Foot", route: "/exercise/leg" },
+  { slug: "eye", label: "Eye exercise", title: "Group 26.png", description: "การบริหารดวงตา\nเพื่อช่วยลดอาการตาล้าจาก\nการจ้องจอเป็นเวลานาน" },
+  { slug: "neck", label: "Neck & Shoulder", title: "Group 26 (1).png", description: "การบริหารส่วนคอ บ่า ไหล่\nช่วยคลายกล้ามเนื้อจาก\nการนั่งเกร็งเป็นเวลานาน" },
+  { slug: "back", label: "Back & Waist", title: "Group 26 (2).png", description: "การบริหารส่วนหลัง เอว\nช่วยให้หมอนรองกระดูก\nคืนสภาพจากการนั่งนาน" },
+  { slug: "arm", label: "Arm & Hand", title: "Group 26 (3).png", description: "การบริหารส่วนแขน มือ นิ้ว\nช่วยยืดกล้ามเนื้อและลดอาการ\nเมื่อยจากการพิมพ์งาน" },
+  { slug: "leg", label: "Leg & Foot", title: "Group 26 (4).png", description: "การบริหารส่วนขา เท้า\nช่วยลดอาการเมื่อยจากการ\nนั่งเป็นเวลานาน" },
 ];
 
 const informations = [
-  {
-    group: "About Office Syndrome",
-    items: [
-      { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม", route: "/info/what-is" },
-      { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม", route: "/info/stages" },
-    ],
-  },
-  {
-    group: "Ergonomics",
-    items: [
-      { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment" },
-      { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment" },
-      { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture" },
-    ],
-  },
+  { group: "About Office Syndrome", items: [
+    { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม", route: "/info/what-is" },
+    { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม", route: "/info/stages" },
+  ] },
+  { group: "Ergonomics", items: [
+    { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment" },
+    { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment" },
+    { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture" },
+  ] },
 ];
 
 export default function ExercisePage() {
-  const router = useRouter();
   const [tab, setTab] = useState<"exercise" | "info">("exercise");
-  const touchStartX = useRef<number | null>(null);
+  const [active, setActive] = useState(0);
+  const scroller = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; scroll: number; moved: boolean } | null>(null);
+  const suppressClick = useRef(false);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
+  function selectExercise(index: number) {
+    const element = scroller.current;
+    if (!element) return;
+    const bounded = Math.max(0, Math.min(exercises.length - 1, index));
+    const slide = element.children[bounded] as HTMLElement;
+    element.scrollTo({
+      left: slide.offsetLeft - (element.clientWidth - slide.clientWidth) / 2,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    });
+  }
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) setTab("info");      // swipe left → info
-      else setTab("exercise");           // swipe right → exercise
+  function syncSelection() {
+    const element = scroller.current;
+    if (!element) return;
+    const center = element.scrollLeft + element.clientWidth / 2;
+    let closest = 0;
+    let distance = Infinity;
+    Array.from(element.children).forEach((child, index) => {
+      const slide = child as HTMLElement;
+      const current = Math.abs(slide.offsetLeft + slide.clientWidth / 2 - center);
+      if (current < distance) { closest = index; distance = current; }
+    });
+    setActive(closest);
+  }
+
+  function startDrag(event: PointerEvent<HTMLDivElement>) {
+    suppressClick.current = false;
+    if (event.pointerType !== "mouse" || event.button !== 0) return;
+    drag.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft, moved: false };
+  }
+
+  function moveDrag(event: PointerEvent<HTMLDivElement>) {
+    const start = drag.current;
+    if (!start) return;
+    const delta = event.clientX - start.x;
+    if (!start.moved && Math.abs(delta) < 6) return;
+    start.moved = true;
+    suppressClick.current = true;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.style.scrollSnapType = "none";
+    event.currentTarget.scrollLeft = start.scroll - delta;
+  }
+
+  function endDrag(event: PointerEvent<HTMLDivElement>) {
+    const moved = drag.current?.moved;
+    drag.current = null;
+    event.currentTarget.style.scrollSnapType = "";
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if (moved) {
+      const element = event.currentTarget;
+      const center = element.scrollLeft + element.clientWidth / 2;
+      const nearest = Array.from(element.children).reduce((best, child, index) => {
+        const slide = child as HTMLElement;
+        const previous = element.children[best] as HTMLElement;
+        return Math.abs(slide.offsetLeft + slide.clientWidth / 2 - center) < Math.abs(previous.offsetLeft + previous.clientWidth / 2 - center) ? index : best;
+      }, 0);
+      selectExercise(nearest);
     }
-    touchStartX.current = null;
-  };
+  }
 
   return (
-    <main
-      style={{
-        height: "100dvh",
-        background: "#fff",
-        fontFamily: "sans-serif",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      {/* Drag handle */}
-      <div style={{ display: "flex", justifyContent: "center", paddingTop: "16px" }}>
-        <div style={{ width: "48px", height: "6px", borderRadius: "3px", background: "#c0bdb8" }} />
-      </div>
+    <main className={styles.page}>
+      <div className={styles.frame} data-tab={tab}>
+        <header className={styles.header}>
+          <Link href="/" aria-label="TrigrR home">
+            <Image src="/photos/logo/logotrigrr 1.png" alt="TrigrR" width={606} height={217} className={styles.logo} preload />
+          </Link>
+        </header>
 
-      {/* Scrollable content — swipeable */}
-      <div
-        style={{ flex: 1, overflowY: "auto", padding: "24px 20px 16px" }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        {tab === "exercise" ? (
-          <>
-            <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "28px", margin: "0 0 24px", color: "#1a1a18" }}>
-              Exercise
-            </h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              {exercises.map((ex) => (
-                <div
-                  key={ex.id}
-                  onClick={() => ex.route && router.push(ex.route)}
-                  style={{
-                    position: "relative",
-                    height: "90px",
-                    borderRadius: "100px",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    background: "#d4d1cb",
-                    border: "2px dashed #b0aca6",
-                  }}
-                >
-                  {/* <Image src={`/${ex.id}.jpg`} alt={ex.label} fill style={{ objectFit: "cover" }} /> */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "0 28px",
-                    }}
-                  >
-                    <span style={{ fontWeight: 700, fontSize: "18px", color: "#fff" }}>{ex.label}</span>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" rx="3"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <path d="M21 15l-5-5L5 21"/>
-                    </svg>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <>
-            {informations.map((section) => (
+        <section className={styles.exercisePanel} hidden={tab !== "exercise"} aria-label="Choose an exercise">
+          <h1 className={styles.srOnly}>Choose an exercise</h1>
+          <div
+            ref={scroller}
+            className={styles.carousel}
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="Exercises. Swipe sideways or use the arrow keys to choose."
+            tabIndex={0}
+            onScroll={syncSelection}
+            onPointerDown={startDrag}
+            onPointerMove={moveDrag}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onClickCapture={(event) => { if (suppressClick.current) { event.preventDefault(); suppressClick.current = false; } }}
+            onKeyDown={(event) => {
+              const index = event.key === "ArrowRight" ? active + 1 : event.key === "ArrowLeft" ? active - 1 : event.key === "Home" ? 0 : event.key === "End" ? exercises.length - 1 : null;
+              if (index !== null) { event.preventDefault(); selectExercise(index); }
+            }}
+          >
+            {exercises.map((exercise, index) => (
+              <article key={exercise.slug} className={styles.slide} data-active={index === active} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${exercises.length}: ${exercise.label}`}>
+                <h2 className={styles.exerciseTitle}>
+                  <Image src={`/photos/bg&text menu bar/${exercise.title}`} alt={exercise.label} fill sizes="(max-width: 500px) 74vw, 370px" draggable={false} />
+                </h2>
+                <Link href={`/exercise/${exercise.slug}`} className={`${styles.card} ${index % 2 ? styles.blue : styles.yellow}`} aria-label={`Start ${exercise.label}`} tabIndex={index === active ? 0 : -1} draggable={false}>
+                  <span className={styles.artwork}>
+                  <Image src={`/photos/exercise/${exercise.slug}.webp`} alt="" fill sizes="(max-width: 500px) 72vw, 360px" className={`${styles.character} ${exercise.slug === "eye" ? styles.eye : ""}`} draggable={false} preload={index === 0} />
+                  </span>
+                </Link>
+                <p className={styles.description} lang="th">{exercise.description}</p>
+              </article>
+            ))}
+          </div>
+          <div className={styles.progress}>
+            <input type="range" min={0} max={4} step={1} value={active} onChange={(event) => selectExercise(Number(event.target.value))} aria-label="Choose exercise" aria-valuetext={exercises[active].label} style={{ background: `linear-gradient(to right, #a18e82 ${((active + 1) / exercises.length) * 100}%, #e5e2d7 0)` }} />
+          </div>
+          <p className={styles.srOnly} aria-live="polite">{exercises[active].label}, {active + 1} of {exercises.length}</p>
+        </section>
+
+        <section className={styles.infoPanel} hidden={tab !== "info"} aria-label="Informations">
+          <h1 className={styles.srOnly}>Informations</h1>
+          {informations.map((section, groupIndex) => (
+            <section key={section.group} className={styles.infoGroup} aria-labelledby={`info-heading-${groupIndex}`}>
+              <h2 id={`info-heading-${groupIndex}`}>
+                {groupIndex === 0 ? <>About<br />Office Syndrome</> : section.group}
+              </h2>
               <div
-                key={section.group}
-                style={{
-                  background: "#e8e5e0",
-                  borderRadius: "20px",
-                  padding: "20px 16px",
-                  marginBottom: "16px",
+                className={styles.infoCards}
+                role="region"
+                aria-labelledby={`info-heading-${groupIndex}`}
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.target !== event.currentTarget || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+                  event.preventDefault();
+                  event.currentTarget.scrollBy({
+                    left: (event.key === "ArrowRight" ? 1 : -1) * event.currentTarget.clientWidth * 0.72,
+                    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+                  });
                 }}
               >
-                <h2 style={{ textAlign: "center", fontWeight: 900, fontSize: "22px", margin: "0 0 16px", color: "#1a1a18" }}>
-                  {section.group}
-                </h2>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {section.items.map((item) => (
-                    <div
-                      key={item.en}
-                      onClick={() => item.route && router.push(item.route)}
-                      style={{
-                        background: "#c0bdb8",
-                        borderRadius: "100px",
-                        padding: "14px 20px",
-                        cursor: "pointer",
-                        textAlign: "center",
-                      }}
-                    >
-                      <p style={{ margin: 0, fontWeight: 500, fontSize: "15px", color: "#fff" }}>{item.en}</p>
-                      <p style={{ margin: "2px 0 0", fontSize: "12px", color: "rgba(255,255,255,0.8)" }}>{item.th}</p>
-                    </div>
-                  ))}
-                </div>
+                {section.items.map((item, itemIndex) => (
+                  <Link href={item.route} key={item.route} className={styles.infoCard} data-color={(groupIndex + itemIndex) % 2 === 0 ? "yellow" : "blue"}>
+                    <span>{item.en}</span>
+                    <span lang="th">{item.th}</span>
+                  </Link>
+                ))}
               </div>
-            ))}
-          </>
-        )}
-      </div>
+            </section>
+          ))}
+        </section>
 
-      {/* Tab switcher — draggable pill */}
-      <div style={{ padding: "12px 20px 32px" }}>
-        <div
-          style={{
-            position: "relative",
-            background: "#d4d1cb",
-            borderRadius: "100px",
-            padding: "6px",
-            display: "flex",
-          }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* Sliding background pill */}
-          <div
-            style={{
-              position: "absolute",
-              top: "6px",
-              bottom: "6px",
-              width: "calc(50% - 6px)",
-              background: "#555",
-              borderRadius: "100px",
-              transform: tab === "exercise" ? "translateX(0)" : "translateX(calc(100% + 4px))",
-              transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-              left: "6px",
-            }}
-          />
-
-          {/* Exercise side: icon when active, text when inactive */}
-          <button
-            onClick={() => setTab("exercise")}
-            style={{
-              flex: 1,
-              position: "relative",
-              zIndex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "transparent",
-              border: "none",
-              borderRadius: "100px",
-              padding: "14px 20px",
-              cursor: "pointer",
-            }}
-          >
-            {tab === "exercise" ? (
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29l-1.43-1.43z"/>
-              </svg>
-            ) : (
-              <span style={{ fontWeight: 700, fontSize: "15px", color: "#555" }}>Exercise</span>
-            )}
+        <nav className={styles.tabs} aria-label="Menu sections">
+          <button type="button" aria-label="Exercise" aria-pressed={tab === "exercise"} onClick={() => setTab("exercise")}>
+            {tab === "exercise" ? "exercise" : <svg viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(-45 16 16)" fill="currentColor" stroke="none"><rect x="10" y="13" width="12" height="6" rx="1" /><rect x="5" y="7" width="5" height="18" rx="1" /><rect x="22" y="7" width="5" height="18" rx="1" /><rect x="1" y="11" width="4" height="10" rx="1" /><rect x="27" y="11" width="4" height="10" rx="1" /></g></svg>}
           </button>
-
-          {/* Info side: icon when active, text when inactive */}
-          <button
-            onClick={() => setTab("info")}
-            style={{
-              flex: 1,
-              position: "relative",
-              zIndex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "transparent",
-              border: "none",
-              borderRadius: "100px",
-              padding: "14px 20px",
-              cursor: "pointer",
-            }}
-          >
-            {tab === "info" ? (
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 18H7V4h10v16z"/>
-                <path d="M9 6h6v2H9zm0 4h6v2H9zm0 4h4v2H9z"/>
-              </svg>
-            ) : (
-              <span style={{ fontWeight: 700, fontSize: "15px", color: "#555" }}>Informations</span>
-            )}
+          <button type="button" aria-label="Informations" aria-pressed={tab === "info"} onClick={() => setTab("info")}>
+            {tab === "info" ? "informations" : <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 5 23 2v23L9 28zM9 5H6v26h22V7M9 28H6" /></svg>}
           </button>
-        </div>
+        </nav>
       </div>
     </main>
   );

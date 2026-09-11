@@ -1,80 +1,42 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import styles from "./page.module.css";
 
 export default function HomePage() {
-  const router = useRouter();
-
   return (
-    <main
-      style={{
-        height: "100dvh",
-        background: "#fff",
-        overflow: "hidden",
-        position: "relative",
-        fontFamily: "sans-serif",
-      }}
-    >
-      {/* Image placeholder — replace src with actual image path later */}
-      <div
-        style={{
-          position: "absolute",
-          top: "28%",
-          right: 0,
-          width: "55%",
-          bottom: 0,
-          borderTopLeftRadius: "20px",
-          overflow: "hidden",
-          border: "2px dashed #b0b0b0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#f5f5f5",
-        }}
-      >
-        <span style={{ color: "#b0b0b0", fontSize: "3.5vw", fontWeight: 500 }}>รูปภาพ</span>
-        {/* <Image src="/your-image.jpg" alt="hero" fill style={{ objectFit: "cover" }} priority /> */}
-      </div>
+    <main className={styles.home}>
+      <section className={styles.poster} aria-labelledby="home-title">
+        <Image
+          src="/photos/BG/home.png"
+          alt=""
+          fill
+          preload
+          sizes="(max-width: 600px) 100vw, 600px"
+          className={styles.background}
+        />
 
-      {/* Text — top left */}
-      <div
-        style={{
-          position: "absolute",
-          top: "12%",
-          left: "7%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <span style={{ fontWeight: 900, fontSize: "13vw", lineHeight: 1.05, color: "#1a1a18" }}>
-          OFFICE
-        </span>
-        <span style={{ fontWeight: 700, fontSize: "9vw", lineHeight: 1.05, color: "#1a1a18", marginTop: "2px" }}>
-          SYNDROME
-        </span>
-        <span style={{ fontSize: "8.5vw", fontWeight: 400, color: "#1a1a18", marginTop: "2px" }}>
-          exercise
-        </span>
-      </div>
+        <h1 id="home-title" className={styles.title}>
+          <span>OFFICE</span>
+          <span>SYNDROME</span>
+          <span className={styles.subtitle}>exercise</span>
+        </h1>
 
-      {/* Button — navigates to /exercise */}
-      <div style={{ position: "absolute", bottom: "30%", left: "7%" }}>
-        <button
-          onClick={() => router.push("/exercise")}
-          style={{
-            background: "#8fe44a",
-            border: "none",
-            borderRadius: "100px",
-            padding: "14px 32px",
-            fontSize: "4.5vw",
-            fontWeight: 500,
-            color: "#1a1a18",
-            cursor: "pointer",
-          }}
-        >
+        <div className={styles.character}>
+          <Image
+            src="/photos/other/IMG_6965.PNG"
+            alt="A smiling character in a tiger costume doing a side stretch"
+            width={2388}
+            height={1668}
+            preload
+            sizes="(max-width: 600px) 272vw, 1630px"
+            className={styles.characterImage}
+          />
+        </div>
+
+        <Link href="/exercise" className={styles.start}>
           Let&apos;s go!
-        </button>
-      </div>
+        </Link>
+      </section>
     </main>
   );
 }

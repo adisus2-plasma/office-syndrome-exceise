@@ -1,0 +1,111 @@
+.home {
+  min-height: 100dvh;
+  background: #bfedfc;
+  display: flex;
+  justify-content: center;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+}
+
+.poster {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 600px;
+  min-height: 100dvh;
+  aspect-ratio: 430 / 932;
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.background {
+  z-index: -1;
+  object-fit: fill;
+}
+
+.title {
+  position: absolute;
+  top: 10.5%;
+  left: 7%;
+  z-index: 2;
+  margin: 0;
+  color: #fff0b3;
+  font-size: 14cqw;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.055em;
+  -webkit-text-stroke: 2px #a28b75;
+  paint-order: stroke fill;
+  text-shadow: 3px 5px 5px rgb(83 102 105 / 28%);
+}
+
+.title > span {
+  display: block;
+}
+
+.title .subtitle {
+  margin-top: 2.5cqw;
+  color: #a18c80;
+  font-size: 12cqw;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  -webkit-text-stroke: 0;
+  text-shadow: 2px 4px 4px rgb(83 102 105 / 15%);
+}
+
+.character {
+  position: absolute;
+  top: 33.5%;
+  left: 23%;
+  width: 80%;
+  aspect-ratio: 756 / 1270;
+  overflow: hidden;
+  transform: scaleX(-1);
+}
+
+/* Remove the source artwork's transparent margins without changing the file. */
+.characterImage {
+  position: absolute;
+  width: 315.873%;
+  max-width: none;
+  height: auto;
+  left: -214.021%;
+  top: -18.74%;
+}
+
+.start {
+  position: absolute;
+  top: 69.1%;
+  left: 7%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 43%;
+  min-height: 12.5cqw;
+  border-radius: 999px;
+  background: #fff;
+  color: #8ecbe6;
+  font-size: 8cqw;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: 3px 6px 7px rgb(63 103 119 / 25%);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.start:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 8px 10px rgb(63 103 119 / 30%);
+}
+
+.start:focus-visible {
+  outline: 3px solid #8d7563;
+  outline-offset: 5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start {
+    transition: none;
+  }
+}
