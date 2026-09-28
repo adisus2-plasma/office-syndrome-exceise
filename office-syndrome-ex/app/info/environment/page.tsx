@@ -1,66 +1,50 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-const Placeholder = ({ aspect = "1/1", src }: { aspect?: string; src?: string }) => (
-  <div style={{
-    width: "100%",
-    aspectRatio: aspect,
-    borderRadius: "16px",
-    background: "#e0ddd8",
-    flexShrink: 0,
-    overflow: "hidden",
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }}>
-    {src ? (
-      <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
-    ) : (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#b0aca6" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
-      </svg>
-    )}
-  </div>
-);
+import styles from "./page.module.css";
 
 const items = [
   {
-    labelAlign: "left",
+    title: "แสงสว่าง",
+    image: "lighting",
     bullets: [
-      "- ควรมีทั้งแสงไฟและแสงจากธรรมชาติ",
-      "- แสงไม่สว่างเกินหรือน้อยเกินไป",
-      "- ต้องไม่มีแสงสะท้อนที่หน้าจอ",
+      "ควรมีทั้งแสงไฟและแสงจากธรรมชาติ",
+      "แสงไม่สว่างเกินหรือน้อยเกินไป",
+      "ต้องไม่มีแสงสะท้อนที่หน้าจอ",
     ],
   },
   {
-    labelAlign: "right",
+    title: "สีผนังห้อง",
+    image: "room-colors",
     bullets: [
-      "- ควรเป็นสีที่ให้ความรู้สึกสว่างและสบายตา",
-      "- หลีกเลี่ยงการใช้สีสด ร้อนแรง",
+      "ควรเป็นสีที่ให้ความรู้สึกสว่างและสบายตา",
+      "หลีกเลี่ยงการใช้สีสด ร้อนแรง",
     ],
   },
   {
-    labelAlign: "left",
+    title: "การเพิ่มพื้นที่สีเขียว",
+    image: "plants",
     bullets: [
-      "- อาจเพิ่มต้นไม้ ดอกไม้เพื่อความผ่อนคลาย",
-      "- ช่วยการเมื่อล้าของสายตาได้",
+      "อาจเพิ่มต้นไม้ ดอกไม้เพื่อความผ่อนคลาย",
+      "ช่วยลดความเมื่อยล้าของสายตาได้",
     ],
   },
   {
-    labelAlign: "right",
+    title: "เสียง",
+    image: "noise",
     bullets: [
-      "- ไม่ควรมีเสียงรบกวน เช่น มอเตอร์ เครื่องจักรเพราะจะเกิดความเครียด ความดันสูง และระบบย่อยอาหาร ผิดปกติ",
-      "- อาจมีเสียงดนตรีเบาๆเพิ่มความผ่อนคลาย แต่ขึ้นอยู่กับความเหมาะสม",
+      "ไม่ควรมีเสียงรบกวน เช่น มอเตอร์ เครื่องจักรเพราะจะเกิดความเครียด ความดันสูง และระบบย่อยอาหาร ผิดปกติ",
+      "อาจมีเสียงดนตรีเบาๆเพิ่มความผ่อนคลาย แต่ขึ้นอยู่กับความเหมาะสม",
     ],
   },
   {
-    labelAlign: "left",
+    title: "อุณหภูมิ",
+    image: "temperature",
     bullets: [
-      "- ต้องไม่ร้อนอบอ้าว จะทำให้เพลียง่วงนอน ทำงานได้ไม่เต็มที่",
-      "- ไม่เย็นจนเกินไป จะทำให้ร่างกายเฉยชา ไม่ตื่นตัว",
-      "- อุณหภูมิที่เหมาะสมอยู่ที่ 19-26 องศาเซลเซียส",
+      "ต้องไม่ร้อนอบอ้าว จะทำให้เพลียง่วงนอน ทำงานได้ไม่เต็มที่",
+      "ไม่เย็นจนเกินไป จะทำให้ร่างกายเฉยชา ไม่ตื่นตัว",
+      "อุณหภูมิที่เหมาะสมอยู่ที่ 19-26 องศาเซลเซียส",
     ],
   },
 ];
@@ -69,47 +53,37 @@ export default function EnvironmentSetupPage() {
   const router = useRouter();
 
   return (
-    <main style={{ minHeight: "100dvh", background: "#fff", fontFamily: "sans-serif", paddingBottom: "48px" }}>
+    <main className={styles.page}>
+      <article className={styles.sheet}>
+        <header className={styles.header}>
+          <button type="button" className={styles.back} onClick={() => router.back()} aria-label="Go back">
+            <svg viewBox="0 0 24 32" aria-hidden="true"><path d="M18 3 5 16l13 13" /></svg>
+          </button>
+          <Image src="/photos/logo/logotrigrr 1.png" alt="TrigrR" width={606} height={217} className={styles.logo} preload />
+        </header>
 
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", padding: "16px 20px 0", position: "relative" }}>
-        <button onClick={() => router.back()} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: "#1a1a18" }}>‹</button>
-        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", width: "48px", height: "6px", borderRadius: "3px", background: "#c0bdb8" }} />
-      </div>
+        <h1 className={styles.title}>Ergonomics</h1>
+        <p className={styles.introduction} lang="th">
+          การยศาสตร์ (Ergonomics)<br />
+          คือ ศาสตร์แห่งการปรับเปลี่ยนสภาพแวดล้อมที่ทำงาน เพื่อเพิ่มประสิทธิภาพในการทำงาน ความสะดวกสบาย และลดความเสี่ยงด้านสุขภาพ
+        </p>
 
-      {/* Title */}
-      <h1 style={{ textAlign: "center", fontWeight: 900, fontSize: "30px", margin: "20px 24px 4px", color: "#1a1a18" }}>
-        Environment Setup
-      </h1>
-      <p style={{ textAlign: "center", fontSize: "13px", color: "#555", lineHeight: 1.7, margin: "0 24px 28px" }}>
-        Environment Setup<br />
-      </p>
+        <h2 className={styles.sectionTitle} lang="th">การปรับสภาพแวดล้อมใน<br />ที่ทำงานให้เหมาะสม</h2>
 
-      <h2 style={{ fontWeight: 900, fontSize: "20px", color: "#1a1a18", margin: "0 24px 24px", lineHeight: 1.3 }}>
-        การปรับสภาพแวดล้อมใน<br />ที่ทำงานให้เหมาะสม
-      </h2>
-
-      {/* Items */}
-      <div style={{ padding: "0 24px", display: "flex", flexDirection: "column", gap: "28px" }}>
-        {items.map((item, index) => (
-          <div key={index}>
-            {/* Image + bullets */}
-            <div style={{
-              display: "flex",
-              gap: "14px",
-              flexDirection: item.labelAlign === "right" ? "row-reverse" : "row",
-              alignItems: "flex-start",
-            }}>
-              <div style={{ width: "42%", flexShrink: 0 }}>
-                <Placeholder aspect="1/1" />
+        <div className={styles.environment} lang="th">
+          {items.map((item, index) => (
+            <section key={item.image} className={styles.item} data-reverse={index % 2 === 1} data-environment={item.image} aria-labelledby={`heading-${item.image}`}>
+              <div className={styles.artwork}>
+                <Image src={`/photos/info/${item.image}.webp`} alt={item.title} fill sizes="(max-width: 500px) 43vw, 215px" preload={index === 0} />
               </div>
-              <ul style={{ flex: 1, margin: 0, padding: "0 0 0 16px", fontSize: "12px", color: "#444", lineHeight: 1.8 }}>
-                {item.bullets.map((b) => <li key={b}>{b}</li>)}
-              </ul>
-            </div>
-          </div>
-        ))}
-      </div>
+              <div className={styles.details}>
+                <h3 id={`heading-${item.image}`}>{item.title}</h3>
+                <ul>{item.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
+              </div>
+            </section>
+          ))}
+        </div>
+      </article>
     </main>
   );
 }

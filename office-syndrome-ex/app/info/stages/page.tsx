@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import styles from "./page.module.css";
 
 const stages = [
   {
@@ -24,84 +26,42 @@ export default function StagesPage() {
   const router = useRouter();
 
   return (
-    <main style={{ minHeight: "100dvh", background: "#fff", fontFamily: "sans-serif", paddingBottom: "48px" }}>
+    <main className={styles.page}>
+      <article className={styles.sheet}>
+        <header className={styles.header}>
+          <button type="button" className={styles.back} onClick={() => router.back()} aria-label="Go back">
+            <svg viewBox="0 0 24 32" aria-hidden="true"><path d="M18 3 5 16l13 13" /></svg>
+          </button>
+          <Image src="/photos/logo/logotrigrr 1.png" alt="TrigrR" width={606} height={217} className={styles.logo} preload />
+        </header>
 
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", padding: "16px 20px 0", position: "relative" }}>
-        <button onClick={() => router.back()} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: "#1a1a18" }}>‹</button>
-        <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", width: "48px", height: "6px", borderRadius: "3px", background: "#c0bdb8" }} />
-      </div>
+        <h1 className={styles.title}>Stages of<br />office syndrome</h1>
 
-      {/* Title */}
-      <h1 style={{ textAlign: "center", fontWeight: 900, fontSize: "30px", lineHeight: 1.2, margin: "20px 28px 32px", color: "#1a1a18" }}>
-        Stages of<br />office sydrom
-      </h1>
+        <ol className={styles.timeline}>
+          {stages.map((stage) => (
+            <li key={stage.number} className={styles.stage}>
+              <h2>Stage {stage.number}</h2>
+              <p className={styles.description} lang="th">{stage.description}</p>
+              <div className={styles.note} lang="th"><p>{stage.note}</p></div>
+            </li>
+          ))}
+        </ol>
 
-      {/* Stage list */}
-      <div style={{ padding: "0 24px", display: "flex", flexDirection: "column", gap: "32px" }}>
-        {stages.map((stage) => (
-          <div key={stage.number} style={{ display: "flex", gap: "14px" }}>
-            {/* Left: dot + line */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "4px" }}>
-              <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#c0bdb8", flexShrink: 0 }} />
-              <div style={{ width: "2px", flex: 1, background: "#e0ddd8", marginTop: "6px" }} />
-            </div>
-
-            {/* Right: content */}
-            <div style={{ flex: 1, paddingBottom: "8px" }}>
-              <h2 style={{ fontWeight: 900, fontSize: "20px", color: "#1a1a18", margin: "0 0 8px" }}>
-                Stage {stage.number}
-              </h2>
-              <p style={{ fontSize: "13px", color: "#444", lineHeight: 1.75, margin: "0 0 14px" }}>
-                {stage.description}
-              </p>
-              {/* Note box */}
-              <div style={{
-                background: "#f0ede8",
-                borderRadius: "16px",
-                padding: "14px 16px",
-                textAlign: "center",
-              }}>
-                <p style={{ fontSize: "13px", color: "#555", lineHeight: 1.7, margin: 0 }}>
-                  {stage.note}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Caution section */}
-      <div style={{ padding: "40px 24px 0" }}>
-        {/* Icon + title */}
-        <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "16px" }}>
-          <div style={{
-            width: "64px",
-            height: "64px",
-            background: "#fef3c7",
-            borderRadius: "12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="#fde68a" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <line x1="12" y1="9" x2="12" y2="13" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="12" y1="17" x2="12.01" y2="17" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+        <section className={styles.caution} aria-labelledby="caution-heading">
+          <div className={styles.cautionHeader}>
+            <svg className={styles.warning} viewBox="0 0 90 82" aria-hidden="true">
+              <path d="M40 5Q45-3 50 5L87 70Q92 79 82 79H8Q-2 79 3 70Z" fill="#ffe0a0" stroke="#29251f" strokeWidth="1" />
+              <path d="M42 29Q45 24 48 29L46 58Q45 62 44 58Z" fill="#ff535c" stroke="#29251f" strokeWidth="1" />
+              <circle cx="45" cy="66" r="3.2" fill="#ff535c" stroke="#29251f" strokeWidth="1" />
             </svg>
+            <h2 id="caution-heading">Caution</h2>
           </div>
-          <h2 style={{ fontWeight: 900, fontSize: "22px", color: "#1a1a18", margin: 0 }}>Caution</h2>
-        </div>
-
-        <p style={{ fontSize: "13px", color: "#444", lineHeight: 1.8, margin: "0 0 16px" }}>
-          พนักงานออฟฟิศมักมีปัญหาเกี่ยวกับระบบกระดูกและกล้ามเนื้อ
-        </p>
-        <p style={{ fontSize: "13px", color: "#444", lineHeight: 1.8, margin: 0 }}>
-          หากภาวะดังกล่าวไม่รีบรักษาหรือมีการเปลี่ยนแปลงพฤติกรรมการทำงานอย่างเหมาะสม อาจส่งผลกระทบต่อสุขภาพในระยะยาว และนำไปสู่ภาวะแทรกซ้อนที่รุนแรง เช่น หมอนรองกระดูกกับเส้นประสาท กระดูกสันหลังคด และอาการแขนขาอ่อนแรงได้
-        </p>
-      </div>
-
+          <div className={styles.cautionText} lang="th">
+            <p>พนักงานออฟฟิศมักมีปัญหาเกี่ยวกับระบบกระดูกและกล้ามเนื้อ</p>
+            <p>หากภาวะดังกล่าวไม่รีบรักษาหรือมีการเปลี่ยนแปลงพฤติกรรมการทำงานอย่างเหมาะสม อาจส่งผลกระทบต่อสุขภาพในระยะยาว และนำไปสู่ภาวะแทรกซ้อนที่รุนแรง เช่น หมอนรองกระดูกทับเส้นประสาท กระดูกสันหลังคด และอาการแขนขาอ่อนแรงได้</p>
+          </div>
+        </section>
+      </article>
     </main>
   );
 }
