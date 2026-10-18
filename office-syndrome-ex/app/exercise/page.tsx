@@ -15,13 +15,13 @@ const exercises = [
 
 const informations = [
   { group: "About Office Syndrome", items: [
-    { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม", route: "/info/what-is" },
-    { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม", route: "/info/stages" },
+    { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม", route: "/info/what-is", artwork: 7, width: 378, height: 256 },
+    { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม", route: "/info/stages", artwork: 6, width: 371, height: 285 },
   ] },
   { group: "Ergonomics", items: [
-    { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment" },
-    { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment" },
-    { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture" },
+    { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment", artwork: 3, width: 345, height: 293 },
+    { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment", artwork: 4, width: 349, height: 244 },
+    { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture", artwork: 5, width: 361, height: 269 },
   ] },
 ];
 
@@ -157,15 +157,22 @@ export default function ExercisePage() {
                   if (event.target !== event.currentTarget || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
                   event.preventDefault();
                   event.currentTarget.scrollBy({
-                    left: (event.key === "ArrowRight" ? 1 : -1) * event.currentTarget.clientWidth * 0.72,
+                    left: (event.key === "ArrowRight" ? 1 : -1) * event.currentTarget.clientWidth * 0.92,
                     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
                   });
                 }}
               >
-                {section.items.map((item, itemIndex) => (
-                  <Link href={item.route} key={item.route} className={styles.infoCard} data-color={(groupIndex + itemIndex) % 2 === 0 ? "yellow" : "blue"}>
-                    <span>{item.en}</span>
-                    <span lang="th">{item.th}</span>
+                {section.items.map((item) => (
+                  <Link href={item.route} key={item.route} className={styles.infoCard} data-artwork={item.artwork} aria-label={`${item.en} — ${item.th}`}>
+                    <Image
+                      src={`/photos/menu/Group ${item.artwork}.png`}
+                      alt=""
+                      width={item.width}
+                      height={item.height}
+                      sizes="(max-width: 500px) 92vw, 460px"
+                      className={styles.infoCardArtwork}
+                      draggable={false}
+                    />
                   </Link>
                 ))}
               </div>

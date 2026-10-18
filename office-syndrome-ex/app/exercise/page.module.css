@@ -2,7 +2,6 @@
   min-height: 100dvh;
   background: #fffae9;
   color: #8f8176;
-  font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
   display: flex;
   justify-content: center;
 }
@@ -35,7 +34,9 @@
   flex: 1;
   min-height: 0;
   gap: 6%;
-  padding: 0 14%;
+  /* Allow room for the raised title artwork inside the scroll viewport. */
+  margin-top: -44px;
+  padding: 44px 14% 0;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
@@ -144,7 +145,7 @@
 }
 .infoGroup { min-width: 0; }
 .infoGroup h2 {
-  margin: 0 10% 10px;
+  margin: 0 10% 0;
   color: #a18a7d;
   font-size: clamp(18px, 5.4cqw, 26px);
   font-weight: 700;
@@ -152,35 +153,35 @@
 }
 .infoCards {
   display: flex;
-  gap: 4cqw;
+  gap: 0;
   overflow-x: auto;
-  padding: 0 16% 12px;
-  scroll-padding-inline: 16cqw;
+  padding: 6cqw 9cqw 2cqw;
+  scroll-padding-inline: 9cqw;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
 }
 .infoCards::-webkit-scrollbar { display: none; }
 .infoCard {
-  flex: 0 0 68cqw;
-  min-height: 46cqw;
-  padding: 20px 12px;
+  position: relative;
+  display: block;
+  flex: 0 0 92cqw;
+  height: 69cqw;
   border-radius: 14px;
-  color: #a18a7d;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   scroll-snap-align: start;
-  box-shadow: 2px 5px 5px rgb(96 83 61 / 19%);
+  text-decoration: none;
 }
-.infoGroup:nth-of-type(2) .infoCard { min-height: 50cqw; }
-.infoCard[data-color="yellow"] { background: #ffdf91; }
-.infoCard[data-color="blue"] { background: #beedfc; }
-.infoCard span { display: block; font-size: clamp(14px, 4.3cqw, 21px); line-height: 1.25; }
-.infoCard span[lang="th"] { font-size: clamp(11px, 3.3cqw, 16px); margin-top: 3px; }
+.infoCardArtwork {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+.infoCard[data-artwork="6"] .infoCardArtwork { top: -6cqw; }
+.infoGroup:nth-of-type(2) .infoCards { padding-top: 0; }
+.infoGroup:nth-of-type(2) .infoCard { height: 78cqw; }
+.infoCard[data-artwork="4"] .infoCardArtwork { top: 7cqw; }
 .infoCards:focus-visible { outline: 3px solid #9a8170; outline-offset: -3px; }
 .page a:focus-visible, .page button:focus-visible, .page input:focus-visible, .carousel:focus-visible { outline: 3px solid #9a8170; outline-offset: -3px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
