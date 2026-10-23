@@ -5,8 +5,21 @@ import "./globals.css";
 const fredokaOne = localFont({
   src: "./fonts/fredoka-one-latin-400-normal.woff2",
   variable: "--font-fredoka-one",
+  adjustFontFallback: false,
   weight: "400",
   style: "normal",
+  display: "swap",
+});
+
+const mitr = localFont({
+  src: [
+    { path: "./fonts/mitr-thai-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/mitr-thai-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/mitr-thai-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/mitr-thai-700-normal.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-mitr",
+  adjustFontFallback: false,
   display: "swap",
 });
 
@@ -23,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fredokaOne.variable} h-full antialiased`}
+      className={`${fredokaOne.variable} ${mitr.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
