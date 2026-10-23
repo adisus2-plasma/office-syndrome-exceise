@@ -60,7 +60,7 @@ export default function EquipmentSetupPage() {
     <main className={styles.page}>
       <article className={styles.sheet}>
         <header className={styles.header}>
-          <button type="button" className={styles.back} onClick={() => router.back()} aria-label="Go back">
+          <button type="button" className={styles.back} onClick={() => router.replace("/exercise?tab=info")} aria-label="Back to informations">
             <svg viewBox="0 0 24 32" aria-hidden="true"><path d="M18 3 5 16l13 13" /></svg>
           </button>
           <Image src="/photos/logo/logotrigrr 1.png" alt="TrigrR" width={606} height={217} className={styles.logo} preload />

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState, type PointerEvent } from "react";
+import { Suspense, useRef, useState, type PointerEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
 const exercises = [
@@ -26,7 +27,21 @@ const informations = [
 ];
 
 export default function ExercisePage() {
-  const [tab, setTab] = useState<"exercise" | "info">("exercise");
+  return (
+    <Suspense fallback={<main className={styles.page} aria-busy="true" />}>
+      <ExerciseMenu />
+    </Suspense>
+  );
+}
+
+function ExerciseMenu() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab") === "info" ? "info" : "exercise";
+
+  function setTab(nextTab: "exercise" | "info") {
+    router.replace(nextTab === "info" ? "/exercise?tab=info" : "/exercise", { scroll: false });
+  }
   const [active, setActive] = useState(0);
   const scroller = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; scroll: number; moved: boolean } | null>(null);
@@ -128,7 +143,7 @@ export default function ExercisePage() {
                 </h2>
                 <Link href={`/exercise/${exercise.slug}`} className={`${styles.card} ${index % 2 ? styles.blue : styles.yellow}`} aria-label={`Start ${exercise.label}`} tabIndex={index === active ? 0 : -1} draggable={false}>
                   <span className={styles.artwork}>
-                  <Image src={`/photos/exercise/${exercise.slug}.webp`} alt="" fill sizes="(max-width: 500px) 72vw, 360px" className={`${styles.character} ${exercise.slug === "eye" ? styles.eye : ""}`} draggable={false} preload={index === 0} />
+                  <Image src={`/photos/exercise/${exercise.slug}.webp`} alt="" fill sizes="(max-width: 500px) 72vw, 360px" className={styles.character} draggable={false} preload={index === 0} />
                   </span>
                 </Link>
                 <p className={styles.description} lang="th">{exercise.description}</p>
@@ -157,7 +172,7 @@ export default function ExercisePage() {
                   if (event.target !== event.currentTarget || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
                   event.preventDefault();
                   event.currentTarget.scrollBy({
-                    left: (event.key === "ArrowRight" ? 1 : -1) * event.currentTarget.clientWidth * 0.92,
+                    left: (event.key === "ArrowRight" ? 1 : -1) * event.currentTarget.clientWidth * 0.8,
                     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
                   });
                 }}
@@ -169,7 +184,7 @@ export default function ExercisePage() {
                       alt=""
                       width={item.width}
                       height={item.height}
-                      sizes="(max-width: 500px) 92vw, 460px"
+                      sizes="(max-width: 500px) 76vw, 380px"
                       className={styles.infoCardArtwork}
                       draggable={false}
                     />
