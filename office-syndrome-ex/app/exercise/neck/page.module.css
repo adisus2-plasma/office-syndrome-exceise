@@ -35,7 +35,7 @@
 }
 .back svg { width: 19px; height: 26px; fill: none; stroke: currentColor; stroke-width: 3; }
 .back:focus-visible, .video:focus-visible { outline: 3px solid #826b5e; outline-offset: 3px; border-radius: 8px; }
-.title { width: 72cqw; margin: 8cqw auto 9cqw; }
+.title { width: 96cqw; margin: 4cqw auto 6cqw; }
 .title img { width: 100%; height: auto; }
 .exercises { display: flex; flex-direction: column; gap: 24cqw; padding: 0 3cqw; }
 .exercise h2 { margin: 0 0 3cqw; text-align: center; font-size: clamp(13px, 4.3cqw, 21.5px); line-height: 1.35; font-weight: 800; }

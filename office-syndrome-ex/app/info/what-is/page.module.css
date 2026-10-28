@@ -50,6 +50,13 @@
 .about { padding: 0 2cqw 0 1.3cqw; }
 .sheet h2 { font-size: clamp(17px, 4.7cqw, 24px); font-weight: 700; line-height: 1.3; margin: 0 0 3cqw; text-align: center; }
 .sheet p { font-size: clamp(13px, 3.5cqw, 17.5px); line-height: 1.22; margin: 0; }
+.about ul {
+  margin: 4cqw 0;
+  padding-left: 4.5cqw;
+  list-style: disc;
+  font-size: clamp(13px, 3.5cqw, 17.5px);
+  line-height: 1.3;
+}
 .symptoms { display: grid; grid-template-columns: 50% 50%; padding: 0 6cqw; column-gap: 1cqw; }
 .symptomsLeft { min-width: 0; padding-top: 11cqw; }
 .symptomsText { text-align: center; }

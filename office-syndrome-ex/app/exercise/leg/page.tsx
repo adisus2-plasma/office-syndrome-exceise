@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useVisibleVideo } from "../../hooks/use-visible-video";
 import styles from "./page.module.css";
+import titleArtwork from "../../../public/photos/bg&text menu bar/Group 31.png";
 
 const videos = [
   {
@@ -88,7 +89,7 @@ export default function LegFootPage() {
           <Image src="/photos/logo/logotrigrr 1.png" alt="TrigrR" width={606} height={217} className={styles.logo} preload />
         </header>
         <h1 className={styles.title}>
-          <Image src="/photos/bg&text menu bar/Group 31.png" alt="Leg & Foot" width={301} height={107} preload />
+          <Image src={titleArtwork} alt="Leg & Foot" unoptimized preload />
         </h1>
         <div className={styles.exercises}>
           {videos.map((video) => <ExerciseVideo key={video.id} video={video} />)}

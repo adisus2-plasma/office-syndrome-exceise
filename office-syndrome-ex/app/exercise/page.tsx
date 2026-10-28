@@ -5,6 +5,11 @@ import Link from "next/link";
 import { Suspense, useRef, useState, type PointerEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
+import menuArtwork3 from "../../public/photos/menu/Group 3.png";
+import menuArtwork4 from "../../public/photos/menu/Group 4.png";
+import menuArtwork5 from "../../public/photos/menu/Group 5.png";
+import menuArtwork6 from "../../public/photos/menu/Group 6.png";
+import menuArtwork7 from "../../public/photos/menu/Group 7.png";
 
 const exercises = [
   { slug: "eye", label: "Eye exercise", title: "Group 26.png", description: "การบริหารดวงตา\nเพื่อช่วยลดอาการตาล้าจาก\nการจ้องจอเป็นเวลานาน" },
@@ -16,13 +21,13 @@ const exercises = [
 
 const informations = [
   { group: "About Office Syndrome", items: [
-    { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม", route: "/info/what-is", artwork: 7, width: 378, height: 256 },
-    { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม", route: "/info/stages", artwork: 6, width: 371, height: 285 },
+    { en: "What's Office syndrome?", th: "ทำความรู้จักโรค ออฟฟิศซินโดรม", route: "/info/what-is", artwork: 7, image: menuArtwork7 },
+    { en: "Stages of office syndrome", th: "ระยะอาการของโรคออฟฟิศซินโดรม", route: "/info/stages", artwork: 6, image: menuArtwork6 },
   ] },
   { group: "Ergonomics", items: [
-    { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment", artwork: 3, width: 345, height: 293 },
-    { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment", artwork: 4, width: 349, height: 244 },
-    { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture", artwork: 5, width: 361, height: 269 },
+    { en: "Equipment Setup", th: "การปรับอุปกรณ์สำนักงานให้เหมาะสม", route: "/info/equipment", artwork: 3, image: menuArtwork3 },
+    { en: "Environment Setup", th: "การปรับสภาพแวดล้อมให้เหมาะสม", route: "/info/environment", artwork: 4, image: menuArtwork4 },
+    { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture", artwork: 5, image: menuArtwork5 },
   ] },
 ];
 
@@ -180,11 +185,9 @@ function ExerciseMenu() {
                 {section.items.map((item) => (
                   <Link href={item.route} key={item.route} className={styles.infoCard} data-artwork={item.artwork} aria-label={`${item.en} — ${item.th}`}>
                     <Image
-                      src={`/photos/menu/Group ${item.artwork}.png`}
+                      src={item.image}
                       alt=""
-                      width={item.width}
-                      height={item.height}
-                      sizes="(max-width: 500px) 76vw, 380px"
+                      unoptimized
                       className={styles.infoCardArtwork}
                       draggable={false}
                     />

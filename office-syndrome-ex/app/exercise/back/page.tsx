@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useVisibleVideo } from "../../hooks/use-visible-video";
 import styles from "./page.module.css";
+import titleArtwork from "../../../public/photos/bg&text menu bar/Group 29.png";
 
 const videos = [
   {
@@ -93,7 +94,7 @@ export default function BackWaistPage() {
           <Image src="/photos/logo/logotrigrr 1.png" alt="TrigrR" width={606} height={217} className={styles.logo} preload />
         </header>
         <h1 className={styles.title}>
-          <Image src="/photos/bg&text menu bar/Group 29.png" alt="Back & Waist" width={301} height={107} preload />
+          <Image src={titleArtwork} alt="Back & Waist" unoptimized preload />
         </h1>
         <div className={styles.exercises}>
           {videos.map((video) => <ExerciseVideo key={video.id} video={video} />)}
