@@ -48,6 +48,8 @@
 .carousel::-webkit-scrollbar { display: none; }
 .carousel:active { cursor: grabbing; }
 .slide {
+  --slide-offset: 1;
+  --caption-fold: 1;
   flex: 0 0 100%;
   min-width: 0;
   display: grid;
@@ -57,10 +59,12 @@
 }
 .exerciseTitle {
   position: relative;
-  transform: translateY(-36px);
+  transform: translateY(calc(-36px + var(--caption-fold) * var(--title-travel, 24cqw))) scale(calc(1 - var(--caption-fold) * .2));
+  transform-origin: center;
+  opacity: calc(1 - var(--caption-fold));
   margin: 0 0 9%;
-  opacity: 0;
-  transition: opacity 200ms;
+  z-index: 1;
+  pointer-events: none;
   filter: drop-shadow(3px 5px 3px rgb(92 81 58 / 20%));
 }
 .exerciseTitle img { object-fit: contain; }
@@ -69,13 +73,17 @@
   position: relative;
   border-radius: 18px;
   box-shadow: 6px 8px 6px rgb(96 83 61 / 23%);
-  transition: transform 250ms;
-  transform: scale(.88);
-  transform-origin: center;
+  overflow: visible;
 }
 .yellow { background: linear-gradient(#fffefa, #fff0a0); }
 .blue { background: linear-gradient(#fff, #bcecff); }
-.artwork { position: absolute; inset: 4% 0 0; pointer-events: none; }
+.artwork {
+  position: absolute;
+  inset: 4% 0 0;
+  pointer-events: none;
+  transform: scale(calc(1.15 - var(--slide-offset) * .3));
+  transform-origin: center bottom;
+}
 .card .character { object-fit: contain; object-position: center bottom; padding: 0 5%; pointer-events: none; }
 .description {
   margin: 0;
@@ -84,12 +92,13 @@
   line-height: 1.3;
   text-align: center;
   white-space: pre-line;
-  opacity: 0;
-  transition: opacity 200ms;
+  position: relative;
+  z-index: 1;
+  opacity: calc(1 - var(--caption-fold));
+  transform: translateY(calc(var(--caption-fold) * var(--description-travel, -12cqw))) scale(calc(1 - var(--caption-fold) * .15));
+  pointer-events: none;
 }
-.slide[data-active="true"] .exerciseTitle,
-.slide[data-active="true"] .description { opacity: 1; }
-.slide[data-active="true"] .card { transform: scale(1); }
+.slide[data-active="true"] { --slide-offset: 0; --caption-fold: 0; }
 .progress { display: flex; justify-content: center; padding: 14px 0 12px; }
 .progress input { appearance: none; width: 45%; height: 10px; border-radius: 99px; cursor: pointer; }
 .progress input::-webkit-slider-thumb { appearance: none; width: 24px; height: 16px; background: transparent; border: 0; }
@@ -185,5 +194,10 @@
 .page a:focus-visible, .page button:focus-visible, .page input:focus-visible, .carousel:focus-visible { outline: 3px solid #9a8170; outline-offset: -3px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 @media (prefers-reduced-motion: reduce) {
-  .exerciseTitle, .description, .card { transition: none; }
+  .exerciseTitle { transform: translateY(-36px); opacity: 0; }
+  .description { transform: none; opacity: 0; }
+  .card { transform: none; }
+  .artwork { transform: scale(1.15); }
+  .slide[data-active="true"] .exerciseTitle,
+  .slide[data-active="true"] .description { opacity: 1; }
 }

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useRef, useState, type PointerEvent } from "react";
+import { Suspense, useEffect, useRef, useState, type PointerEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import menuArtwork3 from "../../public/photos/menu/Group 3.png";
@@ -30,6 +30,42 @@ const informations = [
     { en: "Ergonomics Posture", th: "การปรับเปลี่ยนท่าทางการทำงาน", route: "/info/posture", artwork: 5, image: menuArtwork5 },
   ] },
 ];
+
+// Keep the artwork tied to the actual scroll position, including native touch inertia.
+function updateSlidePositions(element: HTMLDivElement) {
+  const center = element.scrollLeft + element.clientWidth / 2;
+  const slides = Array.from(element.children) as HTMLElement[];
+  const step = slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : element.clientWidth;
+  if (step <= 0) return 0;
+  let closest = 0;
+  let nearestDistance = Infinity;
+  slides.forEach((slide, index) => {
+    const distance = Math.abs(slide.offsetLeft + slide.clientWidth / 2 - center);
+    const offset = Math.min(1, distance / step);
+    slide.style.setProperty("--slide-offset", offset.toFixed(4));
+    // Each pair of captions opens outward from its own character.
+    const progress = Math.min(1, offset * 2);
+    const fold = progress * progress * (3 - 2 * progress);
+    slide.style.setProperty("--caption-fold", fold.toFixed(4));
+    const title = slide.children[0] as HTMLElement;
+    const card = slide.children[1] as HTMLElement;
+    const artwork = card.firstElementChild as HTMLElement;
+    const character = artwork.querySelector("img");
+    const characterHeight = character?.naturalHeight && character.naturalWidth
+      ? Math.min(artwork.clientHeight, artwork.clientWidth * .9 * character.naturalHeight / character.naturalWidth)
+      : artwork.clientHeight;
+    const characterScale = 1.15 - offset * .3;
+    const middleY = card.offsetTop + card.offsetHeight - characterHeight * characterScale / 2;
+    const description = slide.children[2] as HTMLElement;
+    slide.style.setProperty("--title-travel", `${middleY - title.offsetTop - title.offsetHeight / 2 + 36}px`);
+    slide.style.setProperty("--description-travel", `${middleY - description.offsetTop - description.offsetHeight / 2}px`);
+    if (distance < nearestDistance) {
+      closest = index;
+      nearestDistance = distance;
+    }
+  });
+  return closest;
+}
 
 export default function ExercisePage() {
   return (
@@ -64,18 +100,25 @@ function ExerciseMenu() {
   }
 
   function syncSelection() {
-    const element = scroller.current;
-    if (!element) return;
-    const center = element.scrollLeft + element.clientWidth / 2;
-    let closest = 0;
-    let distance = Infinity;
-    Array.from(element.children).forEach((child, index) => {
-      const slide = child as HTMLElement;
-      const current = Math.abs(slide.offsetLeft + slide.clientWidth / 2 - center);
-      if (current < distance) { closest = index; distance = current; }
-    });
-    setActive(closest);
+    if (scroller.current) setActive(updateSlidePositions(scroller.current));
   }
+
+  useEffect(() => {
+    const element = scroller.current;
+    if (!element || tab !== "exercise") return;
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setActive(updateSlidePositions(element)));
+    };
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    update();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [tab]);
 
   function startDrag(event: PointerEvent<HTMLDivElement>) {
     suppressClick.current = false;
@@ -148,7 +191,7 @@ function ExerciseMenu() {
                 </h2>
                 <Link href={`/exercise/${exercise.slug}`} className={`${styles.card} ${index % 2 ? styles.blue : styles.yellow}`} aria-label={`Start ${exercise.label}`} tabIndex={index === active ? 0 : -1} draggable={false}>
                   <span className={styles.artwork}>
-                  <Image src={`/photos/exercise/${exercise.slug}.webp`} alt="" fill sizes="(max-width: 500px) 72vw, 360px" className={styles.character} draggable={false} preload={index === 0} />
+                  <Image src={`/photos/exercise/${exercise.slug}.webp`} alt="" fill sizes="(max-width: 500px) 72vw, 360px" className={styles.character} draggable={false} onLoad={syncSelection} preload={index === 0} />
                   </span>
                 </Link>
                 <p className={styles.description} lang="th">{exercise.description}</p>
